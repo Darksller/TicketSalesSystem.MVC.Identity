@@ -1,0 +1,41 @@
+﻿@using TicketSalesSystem.BLL.DTOs;
+@using Microsoft.AspNetCore.Identity;
+@addTagHelper *, TicketSalesSystem.MVC.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@model IEnumerable<FlightDTO>
+
+@if (Model == null || !Model.Any())
+{
+	<h1>Рейсы не найдены.</h1>
+}
+else
+{
+	<div class="container">
+		<route-info departure-point="@Model.First().Route.DeparturePoint" arrival-point="@Model.First().Route.ArrivalPoint"></route-info>
+
+		<div class="row">
+			@foreach (var flight in Model)
+			{
+				<div class="col-md-4">
+					<div class="card mb-4">
+						<div class="card-body">
+							<p class="card-text">Номер рейса: @flight.Id</p>
+							<p class="card-text">Дата отправления: @flight.DepartureTime</p>
+							<p class="card-text">Дата прибытия: @flight.ArrivalTime</p>
+							<p class="card-text">Цена: @flight.Price</p>
+							@if (SignInManager.IsSignedIn(User))
+							{
+								<form action="@Url.Action("ThankYou", "Ticket")" method="post">
+									<input type="hidden" name="flightId" value="@flight.Id" />
+									<button type="submit" class="btn btn-primary">Купить</button>
+								</form>
+							}
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+}
+
